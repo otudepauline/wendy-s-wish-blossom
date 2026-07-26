@@ -42,13 +42,17 @@ export function Celebration({ onDone }: { onDone: () => void }) {
           {CANDLES.map((c) => (
             <div key={c} className="flex flex-col items-center">
               <span
-                className={`mb-1 text-lg transition-all duration-500 ${
+                className={`mb-1 h-4 w-2.5 rounded-[50%_50%_50%_50%/60%_60%_40%_40%] transition-opacity duration-500 ${
                   c < lit ? "opacity-100" : "opacity-0"
                 }`}
-                style={{ animation: c < lit ? "flame-flicker 1.4s ease-in-out infinite" : undefined }}
-              >
-                🔥
-              </span>
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 70%, var(--cream), var(--gold) 55%, color-mix(in oklab, var(--primary) 70%, transparent))",
+                  boxShadow: "0 0 18px color-mix(in oklab, var(--gold) 85%, transparent)",
+                  animation: c < lit ? "flame-flicker 1.4s ease-in-out infinite" : undefined,
+                }}
+              />
+
               <div
                 className={`h-8 w-1.5 rounded-full ${
                   c < lit ? "bg-gold-gradient" : "bg-rose"
