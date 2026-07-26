@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Mode = "petals" | "stars" | "balloons";
 
@@ -22,6 +22,10 @@ function seeded(count: number, salt: number) {
 export function Atmosphere({ mode = "petals" }: { mode?: Mode }) {
   const petals = useMemo(() => seeded(18, 1), []);
   const sparkles = useMemo(() => seeded(26, 5), []);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
 
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
