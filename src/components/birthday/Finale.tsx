@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Typewriter } from "./Typewriter";
 
 const LINES = [
   "Some friendships",
@@ -15,16 +16,13 @@ const LINES = [
 
 export function Finale() {
   const [heart, setHeart] = useState(false);
-  const [visible, setVisible] = useState(0);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    const h = setTimeout(() => setHeart(true), 2600);
-    const timers = LINES.map((_, i) => setTimeout(() => setVisible(i + 1), 3400 + i * 700));
-    return () => {
-      clearTimeout(h);
-      timers.forEach(clearTimeout);
-    };
-  }, []);
+    if (!done) return;
+    const id = setTimeout(() => setHeart(true), 600);
+    return () => clearTimeout(id);
+  }, [done]);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-24 text-center">
@@ -48,20 +46,17 @@ export function Finale() {
             filter: "drop-shadow(0 0 26px color-mix(in oklab, var(--primary) 75%, transparent))",
           }}
         />
-
       </div>
 
-      <div className="max-w-md space-y-3">
-        {LINES.map((l, i) => (
-          <p
-            key={l}
-            className={`font-display text-xl text-night-foreground sm:text-2xl ${
-              i < visible ? "animate-soft-in" : "opacity-0"
-            }`}
-          >
-            {l}
-          </p>
-        ))}
+      <div className="max-w-md">
+        <Typewriter
+          segments={LINES}
+          speed={34}
+          paragraphDelay={260}
+          onDone={() => setDone(true)}
+          className="space-y-3"
+          lineClassName="font-display text-xl text-night-foreground sm:text-2xl"
+        />
       </div>
     </div>
   );

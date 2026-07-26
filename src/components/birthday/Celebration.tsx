@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Typewriter } from "./Typewriter";
 
 const CANDLES = [0, 1, 2, 3, 4];
+
+const WISH_PROMPT = [
+  "Close your eyes.",
+  "Take a deep breath.",
+  "Make a wish.",
+];
 
 export function Celebration({ onDone }: { onDone: () => void }) {
   const [lit, setLit] = useState<number>(0);
   const [wished, setWished] = useState(false);
+  const [promptDone, setPromptDone] = useState(false);
   const allLit = lit >= CANDLES.length;
 
   return (
@@ -84,16 +92,22 @@ export function Celebration({ onDone }: { onDone: () => void }) {
 
       {allLit && !wished && (
         <div className="mt-12 animate-soft-in">
-          <p className="font-display text-2xl leading-relaxed">
-            Close your eyes.
-            <br />
-            Take a deep breath.
-            <br />
-            Make a wish.
-          </p>
+          <div className="mx-auto mb-8 max-w-md text-left">
+            <Typewriter
+              segments={WISH_PROMPT}
+              speed={34}
+              paragraphDelay={260}
+              onDone={() => setPromptDone(true)}
+              className="space-y-4"
+              lineClassName="font-display text-2xl leading-relaxed"
+            />
+          </div>
           <button
             onClick={() => setWished(true)}
-            className="gift-button mt-8 rounded-full px-10 py-4 text-base"
+            className={`gift-button mt-8 rounded-full px-10 py-4 text-base transition-opacity duration-500 ${
+              promptDone ? "opacity-100" : "pointer-events-none opacity-20"
+            }`}
+            disabled={!promptDone}
           >
             Make My Wish ✨
           </button>

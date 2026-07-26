@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Typewriter } from "./Typewriter";
 
 const CARDS = [
   { icon: "❤️", title: "Daughter", body: "A blessing to your family." },
@@ -9,18 +10,36 @@ const CARDS = [
   { icon: "🌍", title: "Dream Chaser", body: "Still writing her story." },
 ];
 
+const INTRO_LINES = [
+  "These are the qualities I see in you.",
+  "Each one is a quiet reminder of how special you are.",
+];
+
 export function ChapterTwo({ onDone }: { onDone: () => void }) {
+  const [introDone, setIntroDone] = useState(false);
   const [shown, setShown] = useState(0);
 
   useEffect(() => {
+    if (!introDone) return;
     const timers = CARDS.map((_, i) => setTimeout(() => setShown(i + 1), 600 * (i + 1)));
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [introDone]);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-20 text-center">
       <p className="mb-2 text-xs tracking-[0.36em] text-primary uppercase">Chapter Two</p>
-      <h2 className="mb-12 font-display text-3xl sm:text-4xl">The Person You're Becoming</h2>
+      <h2 className="mb-4 font-display text-3xl sm:text-4xl">The Person You're Becoming</h2>
+
+      <div className="mx-auto mb-12 max-w-2xl text-left">
+        <Typewriter
+          segments={INTRO_LINES}
+          speed={34}
+          paragraphDelay={300}
+          onDone={() => setIntroDone(true)}
+          className="space-y-4"
+          lineClassName="font-display text-lg leading-relaxed text-muted-foreground"
+        />
+      </div>
 
       <div className="grid w-full max-w-3xl gap-4 sm:grid-cols-2">
         {CARDS.map((c, i) => (
@@ -58,15 +77,31 @@ const AFFIRMATIONS = [
   "Someone is quietly cheering for you. Always.",
 ];
 
+const INTRO_LINES_THREE = [
+  "Tap each card to open it.",
+  "Each one holds a small reminder meant just for you.",
+];
+
 export function ChapterThree({ onDone }: { onDone: () => void }) {
   const [flipped, setFlipped] = useState<number[]>([]);
+  const [introDone, setIntroDone] = useState(false);
   const all = flipped.length >= AFFIRMATIONS.length;
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-20 text-center">
       <p className="mb-2 text-xs tracking-[0.36em] text-primary uppercase">Chapter Three</p>
       <h2 className="mb-3 font-display text-3xl sm:text-4xl">Things I Hope You Never Forget</h2>
-      <p className="mb-10 text-sm text-muted-foreground">Tap each card to open it</p>
+
+      <div className="mx-auto mb-10 max-w-2xl text-left">
+        <Typewriter
+          segments={INTRO_LINES_THREE}
+          speed={34}
+          paragraphDelay={300}
+          onDone={() => setIntroDone(true)}
+          className="space-y-4"
+          lineClassName="font-display text-base leading-relaxed text-muted-foreground"
+        />
+      </div>
 
       <div className="grid w-full max-w-3xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {AFFIRMATIONS.map((text, i) => {
@@ -75,7 +110,7 @@ export function ChapterThree({ onDone }: { onDone: () => void }) {
             <button
               key={text}
               onClick={() => setFlipped((f) => (f.includes(i) ? f : [...f, i]))}
-              className="h-40 [perspective:1000px]"
+              className={`h-40 ${introDone ? "" : "opacity-0"} [perspective:1000px] transition-opacity duration-500`}
               aria-label={`Reveal message ${i + 1}`}
             >
               <div
@@ -100,7 +135,7 @@ export function ChapterThree({ onDone }: { onDone: () => void }) {
       <button
         onClick={onDone}
         className={`gift-button mt-12 rounded-full px-10 py-3.5 text-sm transition-opacity duration-500 ${
-          all ? "opacity-100" : "pointer-events-none opacity-0"
+          all && introDone ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
         Continue

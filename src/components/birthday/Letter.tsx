@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Typewriter } from "./Typewriter";
 
 const PARAGRAPHS = [
   "Happy Birthday.",
@@ -15,6 +16,7 @@ const PARAGRAPHS = [
 
 export function Letter({ onDone }: { onDone: () => void }) {
   const [open, setOpen] = useState(false);
+  const [typingDone, setTypingDone] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => setOpen(true), 1400);
@@ -38,22 +40,29 @@ export function Letter({ onDone }: { onDone: () => void }) {
         <div className="glass-card w-full max-w-xl animate-soft-in rounded-4xl px-7 py-12 sm:px-12">
           <div className="mx-auto mb-8 h-px w-16 bg-gold" />
           <p className="font-hand text-3xl text-primary">Dear Wendy,</p>
-          <div className="mt-6 space-y-5">
-            {PARAGRAPHS.map((p) => (
-              <p key={p} className="font-hand text-2xl leading-snug text-foreground">
-                {p}
-              </p>
-            ))}
+          <div className="mt-6">
+            <Typewriter
+              segments={PARAGRAPHS}
+              speed={34}
+              paragraphDelay={340}
+              onDone={() => setTypingDone(true)}
+              className="space-y-5"
+              lineClassName="font-hand text-2xl leading-snug text-foreground"
+            />
           </div>
-          <p className="mt-10 font-hand text-2xl text-muted-foreground">With appreciation,</p>
-          <p className="font-hand text-3xl text-primary">Pauline</p>
-          <div className="mx-auto mt-10 h-px w-16 bg-gold" />
+          {typingDone && (
+            <>
+              <p className="mt-10 font-hand text-2xl text-muted-foreground">With appreciation,</p>
+              <p className="font-hand text-3xl text-primary">Pauline</p>
+              <div className="mx-auto mt-10 h-px w-16 bg-gold" />
 
-          <div className="mt-10 text-center">
-            <button onClick={onDone} className="gift-button rounded-full px-10 py-3.5 text-sm">
-              Continue
-            </button>
-          </div>
+              <div className="mt-10 text-center">
+                <button onClick={onDone} className="gift-button rounded-full px-10 py-3.5 text-sm">
+                  Continue
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

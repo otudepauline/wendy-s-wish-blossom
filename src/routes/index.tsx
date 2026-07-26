@@ -47,7 +47,7 @@ const CHAPTER_ONE = [
     "Ordinary days.",
     "The kind of moments that quietly become unforgettable memories.",
   ],
-  ["Then graduation happened.", "Life did what it always does.", "It scattered everyone towards different dreams."],
+  ["Then we finished high school.", "Life did what it always does.", "It scattered everyone towards different dreams."],
   ["Different environments.", "Different responsibilities.", "Different versions of ourselves."],
   ["We don't talk every day anymore.", "Not because the friendship disappeared.", "But because life became bigger.", "Busier.", "Different."],
   [
@@ -72,12 +72,30 @@ const NIGHT: Stage[] = ["prologue", "finale"];
 
 function Index() {
   const [stage, setStage] = useState<Stage>("landing");
+  const [nextStage, setNextStage] = useState<Stage | null>(null);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }, [stage]);
 
+  useEffect(() => {
+    if (!isExiting || nextStage === null) return;
+    const id = setTimeout(() => {
+      setStage(nextStage);
+      setNextStage(null);
+      setIsExiting(false);
+    }, 700);
+    return () => clearTimeout(id);
+  }, [isExiting, nextStage]);
+
   const night = NIGHT.includes(stage);
+
+  const goTo = (destination: Stage) => {
+    if (destination === stage) return;
+    setNextStage(destination);
+    setIsExiting(true);
+  };
 
   return (
     <main
@@ -89,11 +107,11 @@ function Index() {
         mode={night ? "stars" : stage === "celebration" ? "balloons" : "petals"}
       />
 
-      <div key={stage} className="relative animate-soft-in">
-        {stage === "landing" && <Landing onOpen={() => setStage("prologue")} />}
+      <div className={`relative ${isExiting ? "animate-soft-out" : "animate-soft-in"}`}>
+        {stage === "landing" && <Landing onOpen={() => goTo("prologue")} />}
 
         {stage === "prologue" && (
-          <PassageScene tone="night" passages={PROLOGUE} onDone={() => setStage("chapter1")} />
+          <PassageScene tone="night" passages={PROLOGUE} onDone={() => goTo("chapter1")} />
         )}
 
         {stage === "chapter1" && (
@@ -101,14 +119,14 @@ function Index() {
             title="Chapter One"
             subtitle="The Beginning"
             passages={CHAPTER_ONE}
-            onDone={() => setStage("chapter2")}
+            onDone={() => goTo("chapter2")}
           />
         )}
 
-        {stage === "chapter2" && <ChapterTwo onDone={() => setStage("chapter3")} />}
-        {stage === "chapter3" && <ChapterThree onDone={() => setStage("celebration")} />}
-        {stage === "celebration" && <Celebration onDone={() => setStage("letter")} />}
-        {stage === "letter" && <Letter onDone={() => setStage("finale")} />}
+        {stage === "chapter2" && <ChapterTwo onDone={() => goTo("chapter3")} />}
+        {stage === "chapter3" && <ChapterThree onDone={() => goTo("celebration")} />}
+        {stage === "celebration" && <Celebration onDone={() => goTo("letter")} />}
+        {stage === "letter" && <Letter onDone={() => goTo("finale")} />}
         {stage === "finale" && <Finale />}
       </div>
     </main>
